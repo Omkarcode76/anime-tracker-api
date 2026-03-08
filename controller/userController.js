@@ -1,7 +1,7 @@
 import User from "../models/userSchema.js";
 import bcrypt from "bcrypt";
 
-const uploadUser = async (req, res) => {
+const signUp = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
@@ -35,4 +35,4 @@ const uploadUser = async (req, res) => {
   }
 };
 
-export default uploadUser;
+export default signUp;
