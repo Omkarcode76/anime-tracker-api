@@ -9,7 +9,7 @@ const getAnime = async (req, res) => {
     query.favourite = req.query.favourite;
     query.watchStatus = req.query.watchStatus;
     query.search = req.query.search;
-    query.sort = req.query.sort || "createAt"
+    query.sort = req.query.sort || "createdAt"
     const filter = {};
     if (query.favourite === "yes" || query.favourite === "no") {
       filter.isFavourite = query.favourite;

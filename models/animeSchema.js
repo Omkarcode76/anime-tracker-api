@@ -25,7 +25,7 @@ const animeSchema = new Schema({
     enum: ["yes", "no"],
     default: "no",
   },
-  createAt:{
+  createdAt:{
     type : Date,
     default : Date.now()
   }
