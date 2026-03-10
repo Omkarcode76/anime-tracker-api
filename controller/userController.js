@@ -1,5 +1,6 @@
 import User from "../models/userSchema.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const signUp = async (req, res) => {
   try {
@@ -23,16 +24,43 @@ const signUp = async (req, res) => {
       email,
       password: hashedPassword,
     });
-    res
-      .status(201)
-      .json({
-        username: user.username,
-        email: user.email,
-        createdAt: user.createdAt,
-      });
+    res.status(201).json({
+      username: user.username,
+      email: user.email,
+      createdAt: user.createdAt,
+    });
   } catch (error) {
     res.status(500).json({ message: "server error" });
   }
 };
 
-export default signUp;
+const Login = async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+
+    const x = {};
+    if (username || email) {
+      x.$or = [{ username: username }, { email: email }];
+    }
+
+    const user = await User.findOne(x).select("+password");
+    if (!user) {
+      return res.status(400).json({ message: "invalid username or email" });
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+
+    if (!match) {
+      return res.status(400).json({ message: "incorrect password" });
+    }
+
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+    res.status(200).json(token);
+  } catch (error) {
+    res.status(500).json({ message: "server error" });
+  }
+};
+
+export { signUp, Login};

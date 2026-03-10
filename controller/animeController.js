@@ -11,6 +11,7 @@ const getAnime = async (req, res) => {
     query.search = req.query.search;
     query.sort = req.query.sort || "createdAt"
     const filter = {};
+    filter.userId = req.user.userId
     if (query.favourite === "yes" || query.favourite === "no") {
       filter.isFavourite = query.favourite;
     }
@@ -56,7 +57,9 @@ const postAnime = async (req, res) => {
     if (title === undefined || genre === undefined) {
       return res.status(400).json({ message: "Fill title and genre" });
     }
+    
     const anime = await Anime.create({
+      userId : req.user.userId,
       title,
       genre,
       watchStatus,

@@ -1,6 +1,11 @@
 import { Schema, model } from "mongoose";
 
 const animeSchema = new Schema({
+  userId: {
+    type: String,
+    required: true,
+  },
+
   title: {
     type: String,
     required: true,
@@ -24,11 +29,10 @@ const animeSchema = new Schema({
     enum: ["yes", "no"],
     default: "no",
   },
-  createdAt:{
-    type : Date,
-    default : Date.now()
-  }
-  
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
 export default model("Anime", animeSchema);
