@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 const Post = () => {
   const router = useRouter();
   const [title, setTitle] = useState("");
@@ -40,6 +41,7 @@ const Post = () => {
     setWatchStatus("");
     setRating("");
     setIsFavourite("");
+   
   };
 
   return (
@@ -91,6 +93,10 @@ const Post = () => {
             Submit
           </button>
         </form>
+       <Link href={'/anime'} className="flex justify-center my-4"> <button className="p-4 bg-blue-600 hover:bg-blue-400 cursor-pointer rounded-full text-white font-bold">
+          back
+          </button>
+          </Link>
       </div>
     </div>
   );
