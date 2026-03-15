@@ -17,7 +17,7 @@ animeRouter.post("/post", postAnime);
 
 
 
-animeRouter.delete("/delete/:id", deleteAnime);
+animeRouter.delete("/:id", deleteAnime);
 
 animeRouter.put("/:id", updateAnime);
 

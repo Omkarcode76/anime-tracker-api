@@ -10,19 +10,20 @@ const Anime = () => {
   const [editWatchStatus, setEditWatchStatus] = useState("");
   const [editFavourite, setEditFavourite] = useState("");
   const [editRating, setEditRating] = useState("");
-  const [deleteId, setDeleteId] = useState("");
   const [animes, setAnimes] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [favourite, setFavourite] = useState("");
   const [watchStatus, setWatchStatus] = useState("");
   const [editingid, setEditingid] = useState("");
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     getAnimes();
-  }, [search, page, favourite, watchStatus, editingid, deleteId]);
+  }, [search, page, favourite, watchStatus]);
 
   const getAnimes = async () => {
+  setLoading(true)
     const params = new URLSearchParams({
       search: search,
       page: page,
@@ -43,12 +44,14 @@ const Anime = () => {
     }
     const data = await res.json();
     setAnimes(data);
+    setLoading(false)
   };
+
   const handleNextPage = () => {
-    setPage(page + 1);
+    setPage(prev => prev + 1);
   };
   const handlePreviousPage = () => {
-    setPage(page - 1);
+    setPage(prev => prev - 1);
   };
 
   const Edit = (item) => {
@@ -79,27 +82,56 @@ const Anime = () => {
         rating: editRating,
       }),
     });
+    if(!res.ok){
+      alert("something went wrong!, update unsuccessful!")
+      return
+    }
     const data = await res.json();
     console.log(data);
+    setAnimes(prev => prev.map(a=>
+      a._id === editingid ?{
+        ...a,
+        titile: editTitle,
+        genre : editGenre,
+        watchStatus: editWatchStatus,
+        isFavourite : editFavourite,
+        rating : editRating
+      }
+      :
+        a
+      
+    ))
     setEditingid("");
+
   };
   const DeleteAnime = async (item) => {
     const Deleteid = item._id;
-    setDeleteId(Deleteid);
     const token = localStorage.getItem("token");
-    const res = await fetch(`http://localhost:3000/anime/delete/${Deleteid}`, {
+    const res = await fetch(`http://localhost:3000/anime/${Deleteid}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    setDeleteId("");
+    if(!res.ok){
+      alert("Something went wrong!, try agin!")
+      return
+    }
+    setAnimes(prev=>prev.filter(a=> a._id !== Deleteid))
+      
+
   };
   const handleLogout = () => {
     localStorage.removeItem("token");
     router.push("/login");
   };
-
+ if(loading){
+   return (
+    <div className="flex justify-center items-center h-[50vh]">
+      <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-green-500"></div>
+    </div>
+  );
+ }
   return (
     <>
       <div className="">
@@ -131,31 +163,31 @@ const Anime = () => {
                   setFavourite("");
                   setSearch("");
                 }}
-                className="hover:text-white cursor-pointer hover:bg-green-500 hover:rounded-full px-4 py-2 font-bold  text-lg "
+                className={`hover:text-white cursor-pointer rounded-full ${!watchStatus && !favourite && "bg-green-500 text-white"} hover:bg-green-500 hover:rounded-full px-4 py-2 font-bold  text-lg`}
               >
                 All
               </li>
               <li
                 onClick={() => setWatchStatus("completed")}
-                className="hover:text-white cursor-pointer hover:bg-green-500 hover:rounded-full px-4 py-2 font-bold  text-lg"
+                className={`hover:text-white cursor-pointer rounded-full ${watchStatus === "completed" && "bg-green-500 text-white"} hover:bg-green-500 hover:rounded-full px-4 py-2 font-bold  text-lg`}
               >
                 Completed
               </li>
               <li
                 onClick={() => setWatchStatus("ongoing")}
-                className="hover:text-white cursor-pointer hover:bg-green-500 hover:rounded-full px-4 py-2 font-bold  text-lg"
+                className={`hover:text-white cursor-pointer rounded-full ${watchStatus === "ongoing" && "bg-green-500 text-white"} hover:bg-green-500 hover:rounded-full px-4 py-2 font-bold  text-lg`}
               >
                 on going
               </li>
               <li
                 onClick={() => setWatchStatus("notStarted")}
-                className="hover:text-white cursor-pointer hover:bg-green-500 hover:rounded-full px-4 py-2 font-bold  text-lg"
+                className={`hover:text-white cursor-pointer rounded-full ${watchStatus === "notStarted" && "bg-green-500 text-white"} hover:bg-green-500 hover:rounded-full px-4 py-2 font-bold  text-lg`}
               >
                 not started
               </li>
               <li
                 onClick={() => setFavourite("yes")}
-                className="hover:text-white cursor-pointer hover:bg-green-500 hover:rounded-full px-4 py-2 font-bold  text-lg"
+                className={`hover:text-white cursor-pointer rounded-full ${favourite === "yes" && "bg-green-500 text-white"} hover:bg-green-500 hover:rounded-full px-4 py-2 font-bold  text-lg`}
               >
                 favourite
               </li>

@@ -28,6 +28,11 @@ const Login = () => {
         password,
       }),
     });
+
+    if(!res.ok){
+      alert("invalid login")
+      return
+    }
     const data = await res.json();
     localStorage.setItem("token", data.token);
     setUsernameORemail("");
@@ -55,7 +60,7 @@ const Login = () => {
             />
           <input
             value={password}
-            type="text"
+            type="password"
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter password"
             className="p-4 w-[25%] border border-black rounded-2xl"
