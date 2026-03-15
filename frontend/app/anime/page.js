@@ -1,23 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
+import { useRouter } from "next/navigation";
 const Anime = () => {
+  const router = useRouter()
   const [editTitle, setEditTitle] = useState("");
   const [editGenre, setEditGenre] = useState("");
   const [editWatchStatus, setEditWatchStatus] = useState("");
   const [editFavourite, setEditFavourite] = useState("");
   const [editRating, setEditRating] = useState("");
-
+const [deleteId, setDeleteId] = useState("")
   const [animes, setAnimes] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [favourite, setFavourite] = useState("");
   const [watchStatus, setWatchStatus] = useState("");
   const [editingid, setEditingid] = useState("");
+
+
   useEffect(() => {
     getAnimes();
-  }, [search, page, favourite, watchStatus,editingid]);
+  }, [search, page, favourite, watchStatus,editingid, deleteId]);
 
   const getAnimes = async () => {
     const params = new URLSearchParams({
@@ -33,6 +36,11 @@ const Anime = () => {
         Authorization: `Bearer ${token}`,
       },
     });
+    if(res.status === 401){
+      localStorage.removeItem("token")
+      router.push("/login")
+      return
+    }
     const data = await res.json();
     setAnimes(data);
   };
@@ -42,6 +50,7 @@ const Anime = () => {
   const handlePreviousPage = () => {
     setPage(page - 1);
   };
+
   const Edit = (item) => {
     console.log(item._id);
     setEditingid(item._id);
@@ -52,8 +61,8 @@ const Anime = () => {
     setEditRating(item.rating);
   };
 
-  const UpdateAnime = async (e) => {
-    e.preventDefault()
+  const UpdateAnime = async () => {
+   
     const token = localStorage.getItem("token");
     const updateId = editingid;
 
@@ -75,6 +84,19 @@ const Anime = () => {
     console.log(data)
     setEditingid("")
   };
+const DeleteAnime = async (item) => {
+   const Deleteid = item._id
+   setDeleteId(Deleteid)
+   const token = localStorage.getItem("token")
+   const res = await fetch(`http://localhost:3000/anime/delete/${Deleteid}`,{
+    method: "DELETE",
+    headers:{
+        Authorization: `Bearer ${token}`
+    }
+   })
+setDeleteId("")
+  
+}
 
   return (
     <>
@@ -87,37 +109,37 @@ const Anime = () => {
         />
         <div>
           <ul className="m-10 flex gap items-center gap-5">
-            <span className="text-blue-500 font-bold text-2xl">Filter: </span>
+            <span className="text-blue-500 font-bold text-center text-2xl">Filter: </span>
             <li
               onClick={() => {
                 setWatchStatus("");
                 setFavourite("");
               }}
-              className="hover:underline cursor-pointer text-xl hover:text-blue-500"
+              className="hover:text-white cursor-pointer hover:bg-green-500 hover:rounded-full px-4 py-2 font-bold  text-lg "
             >
               All
             </li>
             <li
               onClick={() => setWatchStatus("completed")}
-              className="hover:underline cursor-pointer text-xl hover:text-blue-500"
+              className="hover:text-white cursor-pointer hover:bg-green-500 hover:rounded-full px-4 py-2 font-bold  text-lg"
             >
               Completed
             </li>
             <li
               onClick={() => setWatchStatus("ongoing")}
-              className="hover:underline cursor-pointer text-xl hover:text-blue-500"
+              className="hover:text-white cursor-pointer hover:bg-green-500 hover:rounded-full px-4 py-2 font-bold  text-lg"
             >
               on going
             </li>
             <li
               onClick={() => setWatchStatus("notstarted")}
-              className="hover:underline cursor-pointer text-xl hover:text-blue-500"
+              className="hover:text-white cursor-pointer hover:bg-green-500 hover:rounded-full px-4 py-2 font-bold  text-lg"
             >
               not started
             </li>
             <li
               onClick={() => setFavourite("yes")}
-              className="hover:underline cursor-pointer text-xl hover:text-blue-500"
+              className="hover:text-white cursor-pointer hover:bg-green-500 hover:rounded-full px-4 py-2 font-bold  text-lg"
             >
               favourite
             </li>
@@ -141,7 +163,7 @@ const Anime = () => {
                       >
                         Edit
                       </button>
-                      <button className="bg-green-700 text-white text-lg px-3 py-1 rounded-full cursor-pointer hover:bg-green-500 mr-3">
+                      <button onClick={()=>DeleteAnime(a)} className="bg-green-700 text-white text-lg px-3 py-1 rounded-full cursor-pointer hover:bg-green-500 mr-3">
                         Delete
                       </button>
                     </li>
@@ -203,7 +225,7 @@ const Anime = () => {
                     </li>
                     <li>
                       <button
-                        onClick={(e) => UpdateAnime(e)}
+                        onClick={(e) => UpdateAnime()}
                         className="bg-green-700 text-white text-lg px-3 py-1 rounded-full cursor-pointer hover:bg-green-500 mr-3"
                       >
                         save

@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
-
+import { useRouter } from "next/navigation";
 const Post = () => {
+  const router = useRouter()
   const [title, setTitle] = useState("");
   const [genre, setGenre] = useState("");
   const [watchStatus, setWatchStatus] = useState("");
@@ -26,8 +27,14 @@ const Post = () => {
         isFavourite,
       }),
     });
+
+    if(res.status === 401){
+      localStorage.removeItem("token")
+      router.push("/login")
+      return
+    }
     const data = await res.json();
-    console.log(data);
+    console.log(data)
     setTitle("");
     setGenre("");
     setWatchStatus("");
