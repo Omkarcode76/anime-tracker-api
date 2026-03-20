@@ -82,6 +82,11 @@ if(errorh.field === "server"){
                 {errorh.message}
               </div>
             )}
+            {errorh.field === "all" && !username && (
+              <div className="errorText text-sm text-red-500">
+                {errorh.message}
+              </div>
+            )}
           </div>
           <div className="w-[35%]">
             <input
@@ -92,6 +97,11 @@ if(errorh.field === "server"){
               className="p-4 w-full border border-black rounded-2xl"
             />
             {errorh.field === "email" && (
+              <div className="errorText text-sm text-red-500">
+                {errorh.message}
+              </div>
+            )}
+            {errorh.field === "all" && !email && (
               <div className="errorText text-sm text-red-500">
                 {errorh.message}
               </div>
@@ -107,7 +117,12 @@ if(errorh.field === "server"){
             />
             {errorh.field === "password" && (
               <div className="errorText text-sm text-red-500">
-                {errorh.password}
+                {errorh.message}
+              </div>
+            )}
+            {errorh.field === "all" && !password && (
+              <div className="errorText text-sm text-red-500">
+                {errorh.message}
               </div>
             )}
           </div>

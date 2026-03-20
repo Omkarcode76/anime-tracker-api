@@ -158,13 +158,7 @@ const Anime = () => {
     router.push("/login");
   };
   
- if(loading){
-   return (
-    <div className="flex justify-center items-center h-[50vh]">
-      <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-green-500"></div>
-    </div>
-  );
- }
+ 
  if(errorh.field === "server"){
   return(
     <>
@@ -241,6 +235,10 @@ const Anime = () => {
             <Link href={'/anime/post'}><button className="bg-red-500  text-white rounded-full px-4 py-3 cursor-pointer hover:bg-red-400 text-lg font-bold">Add Anime</button></Link>
 </div>
           </div>
+          {loading && (<div className="flex justify-center items-center h-[50vh]">
+      <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-green-500"></div>
+    </div>
+  )}
          {animes.length !== 0 ? ( <div>
           <ul className="">
             {animes.map((a) => (

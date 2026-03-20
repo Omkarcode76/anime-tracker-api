@@ -8,20 +8,6 @@ const signUp = async (req, res) => {
     
     const hashedPassword = await bcrypt.hash(password, 8);
     
-    const isUsername = await User.findOne({ username: username });
-    const isEmail = await User.findOne({ email: email });
-    if (isUsername) {
-      return res
-        .status(400)
-        .json({field : "username", message: `user with username ${username} already exists` });
-    }
-
-    if (isEmail) {
-      return res.status(400).json({field : "email", message: `email ${email} already exists` });
-    }
-    if(password.length <= 3){
-      return res.status(400).json({field : "password",message : "password must atleast contain 4 characters"})
-    }
     const user = await User.create({
       username,
       email,
